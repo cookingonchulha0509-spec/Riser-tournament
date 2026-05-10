@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ProPlay - Premium Esports</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Link the external CSS -->
+    <link rel="stylesheet" href="./css/style.css">
+</head>
+<body>
+    <!--
+    ========================================================
+    FIREBASE REALTIME DATABASE RULES
+    ========================================================
+    {
+      "rules": {
+        ".read": "false",
+        ".write": "false",
+        "users": { "$uid": { ".read": "auth != null", ".write": "auth != null && auth.uid == $uid || root.child('admins/'+auth.uid).exists()" } },
+        "tournaments": {
+          ".read": "auth != null",
+          ".write": "root.child('admins/'+auth.uid).exists()",
+          "$tid": {
+             "players": { "$uid": { ".write": "auth != null && auth.uid == $uid && !data.exists()", ".validate": "newData.hasChildren(['username', 'slot'])" } },
+             "joined": { ".write": "auth != null" }
+          }
+        },
+        "walletHistory": { "$uid": { ".read": "auth != null && auth.uid == $uid", ".write": "auth != null && auth.uid == $uid || root.child('admins/'+auth.uid).exists()" } },
+        "withdrawals": {
+          ".read": "root.child('admins/'+auth.uid).exists() || auth != null",
+          ".write": "auth != null",
+          "$wid": { ".write": "auth != null && newData.child('uid').val() == auth.uid || root.child('admins/'+auth.uid).exists()" }
+        },
+        "admins": { ".read": "auth != null" },
+        "settings": { ".read": "true" },
+        "banners": { ".read": "true" },
+        "categories": { ".read": "true" },
+        "gateway_lock": { ".read": "auth != null", ".write": "auth != null" }
+      }
+    }
+    ========================================================
+    -->
+
+    <div id="global-loader"><div class="minimal-spinner"></div></div>
+    <div id="toast-container"></div>
+
+    <div id="app-container">
+        
+        <!-- AUTH SCREEN -->
+        <div id="screen-auth" class="screen" style="display: flex; flex-direction: column; justify-content: center; padding: 32px; background: #FFF;">
+            <div class="animate-enter" style="text-align: center; margin-bottom: 40px;">
+                <h1 style="font-size: 32px; color: var(--color-navy); font-weight: 800; margin-bottom: 8px;">ProPlay</h1>
+                <p style="color: var(--text-gray); font-size: 14px; font-weight: 600;">Welcome to Legends</p>
+            </div>
+
+            <div class="animate-enter" style="animation-delay: 0.1s;">
+                <form id="form-login">
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" id="login-email" class="input-field" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="login-password" class="input-field" placeholder="Password" required>
+                    </div>
+                    <button type="submit" id="btn-login" class="btn btn-purple" style="margin-top: 16px;" onclick="vibrate(10)">Sign In</button>
+                    <p style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-gray); font-weight: 600;">
+                        New here? <span id="link-to-register" style="color: var(--color-purple); cursor: pointer; font-weight: 700;">Create Account</span>
+                    </p>
+                </form>
+
+                <form id="form-register" class="hidden">
+                    <div class="input-group">
+                        <label>In-game Name</label>
+                        <input type="text" id="reg-username" class="input-field" placeholder="Game Username" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" id="reg-email" class="input-field" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="reg-password" class="input-field" placeholder="Password" required minlength="6">
+                    </div>
+                    <button type="submit" id="btn-register" class="btn btn-purple" style="margin-top: 16px;" onclick="vibrate(10)">Register</button>
+                    <p style="text-align: center; margin-top: 24px; font-size: 14px; color: var(--text-gray); font-weight: 600;">
+                        Already registered? <span id="link-to-login" style="color: var(--color-purple); cursor: pointer; font-weight: 700;">Sign In</span>
+                    </p>
+                </form>
+            </div>
+        </div>
+
+        <div id="main-app" class="hidden">
+            
+            <!-- HOME SCREEN -->
+            <div id="screen-home" class="screen" style="background: var(--color-navy-dark);">
+                <div class="flex-between" style="padding: 16px 20px; background: var(--color-navy-dark);">
+                    <div class="flex" style="gap: 12px;">
+                        <img src="" id="home-avatar" alt="Logo" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #333;">
+                        <div>
+                            <div style="font-size: 12px; color: #FFF; font-weight: 500;">Welcome Back,</div>
+                            <div id="home-username" style="font-size: 16px; font-weight: 700; color: #FFF;">Player</div>
+                        </div>
+                    </div>
+                    <div style="background: #FFF; padding: 6px 12px; border-radius: 4px; font-weight: 800; font-size: 14px; display: flex; align-items: center; gap: 6px; box-shadow: 0 2px 8px rgba(0,0,0,0.5);" onclick="vibrate(10); navTo('screen-wallet')">
+                        <i class="fa-solid fa-coins text-gold"></i>
+                        <span id="home-balance" style="color: #000;">0</span>
+                    </div>
+                </div>
+
+                <div class="hero-slider animate-enter" id="hero-slider" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 16px; gap: 16px; margin-bottom: 24px;"></div>
+
+                <div class="animate-enter" style="padding: 0 16px;">
+                    <h3 style="font-size: 16px; color: #FFF; text-align: center; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">My Matches</h3>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 32px;">
+                        <div style="background: #FFF; border-radius: 8px; padding: 16px 0; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onclick="vibrate(10); navToPlayTab('Ongoing')">
+                            <div style="width: 40px; height: 40px; background: #88D4C0; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">
+                                <i class="fa-solid fa-rotate" style="color:#FFF; font-size: 20px;"></i>
+                            </div>
+                            <span style="font-size: 13px; font-weight: 700; color: #000;">Ongoing</span>
+                        </div>
+                        <div style="background: #FFF; border-radius: 8px; padding: 16px 0; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onclick="vibrate(10); navToPlayTab('Upcoming')">
+                            <div style="width: 40px; height: 40px; background: #00BCD4; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">
+                                <i class="fa-regular fa-calendar-check" style="color:#FFF; font-size: 20px;"></i>
+                            </div>
+                            <span style="font-size: 13px; font-weight: 700; color: #000;">Upcoming</span>
+                        </div>
+                        <div style="background: #FFF; border-radius: 8px; padding: 16px 0; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onclick="vibrate(10); navToPlayTab('Completed')">
+                            <div style="width: 40px; height: 40px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;">
+                                <i class="fa-solid fa-check" style="color:#FFF; font-size: 20px;"></i>
+                            </div>
+                            <span style="font-size: 13px; font-weight: 700; color: #000;">Completed</span>
+                        </div>
+                    </div>
+
+                    <h3 style="font-size: 16px; color: #FFF; text-align: center; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">Esports Games</h3>
+                    <div id="category-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding-bottom: 32px;"></div>
+                </div>
+            </div>
+
+            <!-- PLAY / MATCHES -->
+            <div id="screen-play" class="screen">
+                <div class="top-header">
+                    <h2>MATCHES</h2>
+                </div>
+                <div class="trade-tabs">
+                    <div class="tab-btn active" data-status="Upcoming" onclick="vibrate(10); setPlayTab('Upcoming')">UPCOMING</div>
+                    <div class="tab-btn" data-status="Ongoing" onclick="vibrate(10); setPlayTab('Ongoing')">ONGOING</div>
+                    <div class="tab-btn" data-status="Completed" onclick="vibrate(10); setPlayTab('Completed')">RESULTS</div>
+                </div>
+                <div style="padding: 16px;" id="play-tournaments-list"></div>
+            </div>
+
+            <!-- EARN TAB -->
+            <div id="screen-earn" class="screen" style="background: var(--color-navy-dark);">
+                <div class="top-header" style="background: transparent; box-shadow: none;">
+                    <h2>REWARDS HUB</h2>
+                </div>
+                <div style="padding: 16px;">
+                    
+                    <div class="glass-card neon-border-mint" style="margin-bottom: 24px;">
+                        <div style="width:56px; height:56px; background:rgba(136,212,192,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:26px; margin:0 auto 16px; color: var(--color-mint); box-shadow: 0 0 15px rgba(136,212,192,0.3);">
+                            <i class="fa-solid fa-calendar-check"></i>
+                        </div>
+                        <h3 class="neon-text" style="font-size:20px; font-weight:800; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Daily Bonus</h3>
+                        <p style="font-size:13px; color:#A0AABF; margin-bottom:20px; font-weight:500;">Coming soon: Claim free coins every single day by simply logging in.</p>
+                        <button class="btn" style="background: rgba(136,212,192,0.2); color: var(--color-mint); box-shadow: 0 4px 15px rgba(136,212,192,0.1);" disabled>LOCKED</button>
+                    </div>
+
+                    <div class="glass-card neon-border-purple">
+                        <div style="width:56px; height:56px; background:rgba(98,0,238,0.15); border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:28px; margin:0 auto 16px; color: #b388ff; box-shadow: 0 0 20px rgba(98,0,238,0.4);">
+                            <i class="fa-solid fa-dharmachakra"></i>
+                        </div>
+                        <h3 class="neon-text" style="font-size:20px; font-weight:800; margin-bottom:8px; text-transform:uppercase; letter-spacing:1px;">Lucky Spin</h3>
+                        <p style="font-size:13px; color:#A0AABF; margin-bottom:20px; font-weight:500;">Spin the premium wheel every 24 hours to win up to 15 coins!</p>
+                        <button class="btn btn-purple" style="box-shadow: 0 4px 15px rgba(98,0,238,0.4);" onclick="vibrate(10); openSpinModal()">SPIN & WIN NOW</button>
+                        <div id="spin-status" style="margin-top:16px; font-size:12px; font-weight:700; color:#88D4C0; text-transform:uppercase; letter-spacing: 1px;">Ready to Spin!</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- LEADERBOARD TAB -->
+            <div id="screen-leaderboard" class="screen">
+                <div class="top-header">
+                    <h2>Leaderboard</h2>
+                </div>
+                <div style="background:var(--color-navy-dark); color:#FFF; text-align:center; padding:12px; font-weight:800; font-size:13px; margin: 16px 16px 12px 16px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                    <i class="fa-solid fa-trophy" style="margin-right:8px; color: var(--color-orange);"></i> TOP MONTHLY EARNERS
+                </div>
+                <div style="padding:16px;" id="leaderboard-list"></div>
+            </div>
+
+            <!-- CATEGORY DETAIL -->
+            <div id="screen-category-detail" class="screen screen-full">
+                <div class="top-header">
+                    <i class="fa-solid fa-arrow-left" onclick="vibrate(10); history.back()"></i>
+                    <h2 id="cd-title" style="text-transform: uppercase;">CATEGORY</h2>
+                </div>
+                <div class="trade-tabs">
+                    <div class="tab-btn active" data-cat-status="Upcoming" onclick="vibrate(10); setCatTab('Upcoming')">UPCOMING</div>
+                    <div class="tab-btn" data-cat-status="Ongoing" onclick="vibrate(10); setCatTab('Ongoing')">ONGOING</div>
+                    <div class="tab-btn" data-cat-status="Completed" onclick="vibrate(10); setCatTab('Completed')">RESULTS</div>
+                </div>
+                <div style="padding: 16px;" id="cd-tournaments-list"></div>
+            </div>
+
+            <!-- WALLET -->
+            <div id="screen-wallet" class="screen" style="background: #FFF;">
+                <div class="top-header" style="justify-content: space-between;">
+                    <div class="flex" style="gap:16px;">
+                        <i class="fa-solid fa-arrow-left" onclick="vibrate(10); navTo('screen-home', true)"></i>
+                        <h2>My Wallet</h2>
+                    </div>
+                    <div style="background: rgba(255,255,255,0.1); padding: 4px 10px; border-radius: 4px; font-weight: 700; font-size: 14px; display:flex; align-items:center; gap:6px;">
+                        <i class="fa-solid fa-coins text-gold"></i> <span id="wallet-header-balance">0</span>
+                    </div>
+                </div>
+                <div style="padding: 12px;">
+                    <div style="border: 1px solid #E0E0E0; border-radius: 8px; overflow: hidden; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                        <div style="background: var(--color-navy); color: #FFF; text-align: center; padding: 12px; font-weight: 800; font-size: 14px; letter-spacing: 1px;">AVAILABLE COINS</div>
+                        <div style="background: #FFF; padding: 20px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-size: 28px; font-weight: 800; display: flex; align-items: center; gap: 8px; color: #000;">
+                                    <i class="fa-solid fa-coins text-gold"></i>
+                                    <span id="wallet-balance-big">0</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; flex-direction: column; gap: 12px;">
+                                <button class="btn btn-purple" style="padding: 10px 24px; font-size: 13px;" onclick="vibrate(10); openDepositScreen()">ADD COINS</button>
+                                <button class="btn btn-mint" style="padding: 10px 24px; font-size: 13px;" onclick="vibrate(10); setWalletTab('wd')">WITHDRAW</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; gap: 8px; margin-bottom: 16px; border-bottom: 2px solid #EEE;">
+                        <div class="tab-btn active" data-w-tab="tx" onclick="setWalletTab('tx')" style="color: #000; border-bottom: 2px solid var(--color-purple);">History</div>
+                        <div class="tab-btn" data-w-tab="wd" onclick="setWalletTab('wd')" style="color: #999;">Withdraw</div>
+                    </div>
+                    
+                    <div id="wallet-tx-list" style="display: flex; flex-direction: column;"></div>
+                    
+                    <div id="wallet-wd-section" style="display: none; flex-direction: column; gap: 24px;">
+                        <div style="padding: 8px 0;">
+                            <div style="background:#F8F9FA; border:1px solid #E0E0E0; border-radius:8px; padding:20px; margin-bottom:24px;">
+                                <div style="margin-bottom: 20px;">
+                                    <label style="font-size: 13px; display: block; margin-bottom: 8px; color: #666; font-weight:700;">UPI ID</label>
+                                    <input type="text" id="withdraw-upi" placeholder="example@upi" class="input-field" style="background:#FFF;">
+                                </div>
+                                <div style="margin-bottom: 20px;">
+                                    <label style="font-size: 13px; display: block; margin-bottom: 8px; color: #666; font-weight:700;">Coins to Withdraw</label>
+                                    <div style="display: flex; align-items: center; border: 1px solid #CCC; border-radius:4px; background:#FFF; overflow:hidden;">
+                                        <div style="padding: 0 16px; background:#F0F0F0; color:#333; font-weight:700; border-right:1px solid #CCC; height:100%; display:flex; align-items:center;"><i class="fa-solid fa-coins text-gold"></i></div>
+                                        <input type="number" id="withdraw-amt" placeholder="Enter amount" style="width: 100%; border: none; padding: 12px 16px; font-size: 15px; outline: none; color: #000; background:transparent;">
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="btn btn-purple" id="btn-submit-withdraw" style="padding: 16px; font-size:16px;" onclick="vibrate(10)">REQUEST WITHDRAWAL</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PROFILE -->
+            <div id="screen-profile" class="screen">
+                <div class="top-header"><h2>Profile</h2></div>
+                <div style="padding: 20px;">
+                    <div style="background: #FFF; border: 1px solid #E0E0E0; border-radius: 8px; padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <img src="" id="profile-avatar" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid #EEE;">
+                        <h2 id="profile-name" style="font-size: 20px; color: #000; font-weight: 800;">Player</h2>
+                        <p style="color: #666; font-size: 13px; margin-top: 4px; font-weight: 600;">UID: <span id="profile-uid" style="color: #000;">---</span></p>
+
+                        <div c
