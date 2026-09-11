@@ -22,7 +22,7 @@
         ::-webkit-scrollbar { display: none; }
         .hidden { display: none !important; }
 
-        .screen { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding-bottom: calc(var(--nav-height) + 40px); opacity: 0; pointer-events: none; transition: 0.3s ease; transform: translateX(20px); z-index: 10; -webkit-overflow-scrolling: touch; }
+        .screen { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding-bottom: calc(var(--nav-height) + 40px); opacity: 0; pointer-events: none; transition: 0.3s ease; transform: translateX(20px); z-index: 10; -webkit-overflow-scrolling: touch; background: var(--bg-light); }
         .screen.active { opacity: 1; pointer-events: auto; z-index: 20; transform: translateX(0); }
         .screen-full { padding-bottom: 0 !important; z-index: 100; }
 
@@ -86,9 +86,23 @@
         
         .dashboard-box { background:#FFF; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.05); margin-bottom:20px; border:1px solid #E0E0E0; }
         
-        /* Skeleton Loader Styles */
-        .skeleton { background: #e0e0e0; background: linear-gradient(90deg, #e0e0e0 25%, #f0f0f0 50%, #e0e0e0 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 4px; }
-        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        /* Skeleton Loader Styles (Native Shimmer) */
+        .skeleton { 
+            background: linear-gradient(90deg, #E0E0E0 25%, #F0F0F0 50%, #E0E0E0 75%); 
+            background-size: 400% 100%; 
+            animation: shimmer 1.2s ease-in-out infinite; 
+            border-radius: 4px; 
+        }
+        .skeleton-dark { 
+            background: linear-gradient(90deg, #2A2F42 25%, #353B52 50%, #2A2F42 75%); 
+            background-size: 400% 100%; 
+            animation: shimmer 1.2s ease-in-out infinite; 
+            border-radius: 4px; 
+        }
+        @keyframes shimmer { 
+            0% { background-position: 100% 0; } 
+            100% { background-position: -100% 0; } 
+        }
     </style>
 </head>
 <body>
@@ -136,6 +150,7 @@
         <!-- AUTH SCREEN (Now safely hidden by default) -->
         <div id="screen-auth" class="screen hidden" style="display: flex; flex-direction: column; justify-content: center; padding: 32px; background: #FFF;">
             <div class="animate-enter" style="text-align: center; margin-bottom: 40px;">
+                <img src="./logo.png" onerror="this.style.display='none'" style="width: 80px; height: 80px; border-radius: 20px; margin: 0 auto 16px; display: block; object-fit: cover; box-shadow: 0 10px 25px rgba(0,0,0,0.1);">
                 <h1 style="font-size: 32px; color: var(--color-navy); font-weight: 800; margin-bottom: 8px;">TruthBattle</h1>
                 <p style="color: var(--text-gray); font-size: 14px; font-weight: 600;">Welcome to Legends</p>
             </div>
@@ -164,7 +179,7 @@
             <div id="screen-home" class="screen" style="background: var(--color-navy-dark);">
                 <div class="flex-between" style="padding: 16px 20px; background: var(--color-navy-dark);">
                     <div class="flex" style="gap: 12px;">
-                        <img loading="lazy" decoding="async" src="" id="home-avatar" class="skeleton" onload="this.classList.remove('skeleton')" alt="Avatar" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #333;">
+                        <img loading="lazy" decoding="async" src="" id="home-avatar" onerror="this.onerror=null; this.src='./logo.png';" class="skeleton" onload="this.classList.remove('skeleton')" alt="Avatar" style="width: 44px; height: 44px; border-radius: 50%; border: 2px solid #333; object-fit: cover;">
                         <div>
                             <div style="font-size: 12px; color: #FFF; font-weight: 500;">Welcome Back,</div>
                             <div id="home-username" style="font-size: 16px; font-weight: 700; color: #FFF;">Player</div>
@@ -180,7 +195,10 @@
                     </div>
                 </div>
 
-                <div class="hero-slider animate-enter" id="hero-slider" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 16px; gap: 16px; margin-bottom: 24px;"></div>
+                <!-- Pre-filled Skeletons for native shimmer before data loads -->
+                <div class="hero-slider animate-enter" id="hero-slider" style="display: flex; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 16px; gap: 16px; margin-bottom: 24px;">
+                    <div class="skeleton-dark" style="min-width:100%; aspect-ratio: 16/9; border-radius:8px;"></div>
+                </div>
 
                 <div class="animate-enter" style="padding: 0 16px;">
                     <h3 style="font-size: 16px; color: #FFF; text-align: center; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">My Matches</h3>
@@ -190,7 +208,11 @@
                         <div style="background: #FFF; border-radius: 8px; padding: 16px 0; text-align: center; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1);" onclick="vibrate(10); navToPlayTab('Completed')"><div style="width: 40px; height: 40px; background: #4CAF50; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px;"><i class="fa-solid fa-check" style="color:#FFF; font-size: 20px;"></i></div><span style="font-size: 13px; font-weight: 700; color: #000;">Completed</span></div>
                     </div>
                     <h3 style="font-size: 16px; color: #FFF; text-align: center; margin-bottom: 16px; text-transform: uppercase; letter-spacing: 1px;">Esports Games</h3>
-                    <div id="category-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding-bottom: 32px;"></div>
+                    <div id="category-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; padding-bottom: 32px;">
+                        <div class="skeleton-dark" style="aspect-ratio: 1/1; border-radius:8px;"></div>
+                        <div class="skeleton-dark" style="aspect-ratio: 1/1; border-radius:8px;"></div>
+                        <div class="skeleton-dark" style="aspect-ratio: 1/1; border-radius:8px;"></div>
+                    </div>
                 </div>
             </div>
 
@@ -202,7 +224,28 @@
                     <div class="tab-btn" data-status="Ongoing" onclick="vibrate(10); setPlayTab('Ongoing')">ONGOING</div>
                     <div class="tab-btn" data-status="Completed" onclick="vibrate(10); setPlayTab('Completed')">RESULTS</div>
                 </div>
-                <div style="padding: 16px;" id="play-tournaments-list"></div>
+                <div style="padding: 16px;" id="play-tournaments-list">
+                    <!-- Native Skeleton Initial State -->
+                    <div style="background:#FFF; border:1px solid #E0E0E0; border-radius:8px; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                        <div class="skeleton" style="aspect-ratio:16/9; width:100%;"></div>
+                        <div style="padding:16px;">
+                            <div class="skeleton" style="width:40%; height:12px; margin-bottom:16px; border-radius:4px;"></div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid #EEE; padding-bottom:16px;">
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div class="skeleton" style="width:50%; height:20px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:100px; height:40px; border-radius:4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- EARN TAB -->
@@ -231,7 +274,7 @@
                 <div class="top-header"><h2>Profile</h2></div>
                 <div style="padding: 20px;">
                     <div style="background: #FFF; border: 1px solid #E0E0E0; border-radius: 8px; padding: 24px; text-align: center; margin-bottom: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
-                        <img loading="lazy" decoding="async" src="" id="profile-avatar" class="skeleton" onload="this.classList.remove('skeleton')" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid #EEE;">
+                        <img loading="lazy" decoding="async" src="" id="profile-avatar" onerror="this.onerror=null; this.src='./logo.png';" class="skeleton" onload="this.classList.remove('skeleton')" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-bottom: 16px; border: 2px solid #EEE;">
                         <h2 id="profile-name" style="font-size: 20px; color: #000; font-weight: 800;">Player</h2>
                         
                         <div class="flex-between" style="margin-top: 24px; border-top: 1px solid #EEE; padding-top: 24px;">
@@ -335,7 +378,9 @@
         <!-- TOURNAMENT DETAIL PAGE -->
         <div id="screen-tournament-detail" class="screen screen-full" style="background: #FFF;">
             <div class="top-header"><i class="fa-solid fa-arrow-left" onclick="vibrate(10); navTo('screen-home', true)"></i><h2 id="td-title-header">MATCH DETAILS</h2></div>
-            <div style="aspect-ratio: 16 / 9; height: auto; position: relative; background-color: var(--color-navy-dark);"><img id="td-img" class="skeleton" onload="this.classList.remove('skeleton')" src="" loading="eager" fetchpriority="high" decoding="async" style="width: 100%; height: 100%; object-fit: cover;"></div>
+            <div style="aspect-ratio: 16 / 9; height: auto; position: relative; background-color: var(--color-navy-dark); overflow: hidden;">
+                <img id="td-img" class="skeleton" onload="this.classList.remove('skeleton')" onerror="this.onerror=null; this.src='./logo.png';" src="" loading="eager" fetchpriority="high" decoding="async" style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;">
+            </div>
             <div class="trade-tabs" style="background: var(--color-navy-header);"><div class="tab-btn td-tab-btn active" data-tab="info" onclick="vibrate(10); switchTdTab('info')">INFO</div><div class="tab-btn td-tab-btn" data-tab="players" onclick="vibrate(10); switchTdTab('players')">PLAYERS</div><div class="tab-btn td-tab-btn" data-tab="leaderboard" onclick="vibrate(10); switchTdTab('leaderboard')" style="display: none;">RESULTS</div></div>
             <div style="padding: 16px;">
                 <h1 id="td-title" style="font-size: 16px; color: #2196F3; font-weight: 800; margin-bottom: 16px; text-transform: uppercase;">Title</h1>
@@ -430,13 +475,27 @@
                         <div style="padding: 12px; background: #F8F9FA; border-radius: 14px; border: 1px solid #EBEBEB; max-width: 80%; margin: 0 auto;">  
                             <div style="font-size: 10px; color: #888; font-weight: 800; text-transform: uppercase; margin-bottom: 2px;">Transfer Exactly</div>  
                             <div style="font-size: 26px; font-weight: 800; color: #1A1A1B; letter-spacing: -1px;">₹<span id="deposit-pay-amt">0</span></div>  
-                        </div>  
+                        </div>
+
+                        <!-- All UPI Apps Supported Section -->
+                        <div style="margin-top: 24px; padding-top: 20px; border-top: 1px dashed #EBEBEB;">
+                            <div style="font-size: 10px; font-weight: 800; color: #888; text-transform: uppercase; margin-bottom: 12px; letter-spacing: 0.5px;">Supports All UPI Apps & Netbanking</div>
+                            <div style="display: flex; justify-content: center; gap: 8px; flex-wrap: wrap;">
+                                <div style="background: #FFF; border: 1px solid #EBEBEB; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 800; color: #EA4335; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">GPay</div>
+                                <div style="background: #FFF; border: 1px solid #EBEBEB; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 800; color: #5E239D; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">PhonePe</div>
+                                <div style="background: #FFF; border: 1px solid #EBEBEB; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 800; color: #00BAF2; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">Paytm</div>
+                                <div style="background: #FFF; border: 1px solid #EBEBEB; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 800; color: #F7941D; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">BHIM</div>
+                                <div style="background: #FFF; border: 1px solid #EBEBEB; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 800; color: #000; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">CRED</div>
+                                <div style="background: #FFF; border: 1px solid #EBEBEB; border-radius: 6px; padding: 6px 10px; font-size: 11px; font-weight: 800; color: #FF9900; display: flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">Amazon</div>
+                            </div>
+                        </div>
+
                     </div>  
                 </div>  
 
                 <div style="margin-top: 24px; text-align: center;">
                     <p style="font-size: 11px; color: #999; font-weight: 600; line-height: 1.5;">  
-                        <i class="fa-solid fa-lock" style="font-size: 10px; margin-right: 4px; color: #A0AABF;"></i> End-to-end encrypted by <b style="color: #1A1A1B;">Riser Truth Security</b><br> Verification time: <b style="color: #1A1A1B;">10-15s</b>. Do not close this screen.
+                        <i class="fa-solid fa-lock" style="font-size: 10px; margin-right: 4px; color: #A0AABF;"></i> End-to-end encrypted by <b style="color: #1A1A1B;">battleTruth Security</b><br> Verification time: <b style="color: #1A1A1B;">10-15s</b>. Do not close this screen.
                     </p>  
                 </div>
             </div>
@@ -509,7 +568,7 @@
                 if(feats.length > 0) {
                     $('maintenance-features-slider').innerHTML = feats.map(f => `
                         <div style="min-width: 100%; scroll-snap-align: center; background: #FFF; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.05); border: 1px solid #E5E7EB;">
-                            <img src="${f.img}" class="skeleton" onload="this.classList.remove('skeleton')" loading="lazy" decoding="async" style="width: 100%; height: 160px; object-fit: cover;">
+                            <img src="${f.img}" class="skeleton" onload="this.classList.remove('skeleton')" onerror="this.onerror=null; this.src='./logo.png';" loading="lazy" decoding="async" style="width: 100%; height: 160px; object-fit: cover; object-position: center; display: block;">
                             <div style="padding: 12px; font-size: 14px; font-weight: 800; color: #111827;">${f.title}</div>
                         </div>
                     `).join('');
@@ -811,8 +870,18 @@
 
         window.closePersonalNotif = async () => { $('modal-personal-notif').classList.remove('active'); await update(ref(db, `users/${userData.uid}/notification`), { read: true, active: false }); };
 
-        // Navigation
+        // Deposit Cleanup to fix theme corruption on back nav
+        const cleanupDeposit = () => {
+            if (window.depositTimerInt) clearInterval(window.depositTimerInt);
+            if (depositListenerUnsubscribe) { depositListenerUnsubscribe(); depositListenerUnsubscribe = null; }
+            $('deposit-state-1').classList.remove('hidden'); 
+            $('deposit-state-2').classList.add('hidden');
+            $('deposit-amt').value = '';
+        };
+
+               // Navigation
         window.navTo = (targetId, isBack = false) => {
+            if (currentScreen === 'screen-deposit' && targetId !== 'screen-deposit') cleanupDeposit();
             if(currentScreen === targetId) return;
             if(!isBack) { historyStack.push(targetId); history.pushState({ screen: targetId }, '', `#${targetId}`); }
             document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active')); const activeNav = document.querySelector(`.nav-item[data-target="${targetId}"]`); if(activeNav) activeNav.classList.add('active');
@@ -820,6 +889,7 @@
             if(targetId === 'screen-leaderboard') renderLeaderboard();
         };
         window.addEventListener('popstate', e => {
+            if (currentScreen === 'screen-deposit') cleanupDeposit();
             if(currentScreen === 'screen-auth') return;
             if (historyStack.length > 1) { historyStack.pop(); navTo(historyStack[historyStack.length-1], true); } else {
                 if (backPressCount === 0) { showToast('Press back again to exit', 'info'); backPressCount++; history.pushState({ screen: 'screen-home' }, '', '#screen-home'); setTimeout(()=>backPressCount=0, 2000); } else window.history.back();
@@ -827,7 +897,7 @@
         });
         window.navToPlayTab = status => { navTo('screen-play'); setPlayTab(status); };
 
-        window.renderLeaderboard = () => { $('leaderboard-list').innerHTML = window.appData.leaderboard.length ? window.appData.leaderboard.map((u,i) => `<div style="display:flex; align-items:center; background:#FFF; border-radius:12px; padding:16px; margin-bottom:12px; border:1px solid #E0E0E0;"><div style="font-size:18px; font-weight:800; width:40px; text-align:center; color:${i===0?'#FFD700':i===1?'#C0C0C0':i===2?'#CD7F32':'#333'};">${i<3 ? `<i class="fa-solid fa-medal"></i>` : `#${i+1}`}</div><img loading="lazy" decoding="async" src="${getAvatar(u.username)}" class="skeleton" onload="this.classList.remove('skeleton')" style="width:44px; height:44px; border-radius:50%; margin-right:16px; border:2px solid #EEE;"><div style="flex:1;"><div style="font-weight:800; font-size:15px; color:#000;">${u.username}</div><div style="font-size:12px; color:#666; font-weight:600; margin-top:2px;">Kills: ${u.kills||0} | Matches: ${u.matches||0}</div></div><div style="text-align:right;"><div style="font-size:11px; color:#999; font-weight:700;">EARNINGS</div><div style="font-weight:800; font-size:16px; color:var(--color-orange);"><i class="fa-solid fa-coins text-gold"></i> ${u.winnings||0}</div></div></div>`).join('') : '<div style="text-align:center; color:#999; padding:40px; font-weight:600;">No rankings yet.</div>'; };
+        window.renderLeaderboard = () => { $('leaderboard-list').innerHTML = window.appData.leaderboard.length ? window.appData.leaderboard.map((u,i) => `<div style="display:flex; align-items:center; background:#FFF; border-radius:12px; padding:16px; margin-bottom:12px; border:1px solid #E0E0E0;"><div style="font-size:18px; font-weight:800; width:40px; text-align:center; color:${i===0?'#FFD700':i===1?'#C0C0C0':i===2?'#CD7F32':'#333'};">${i<3 ? `<i class="fa-solid fa-medal"></i>` : `#${i+1}`}</div><img loading="lazy" decoding="async" src="${getAvatar(u.username)}" onerror="this.onerror=null; this.src='./logo.png';" class="skeleton" onload="this.classList.remove('skeleton')" style="width:44px; height:44px; border-radius:50%; margin-right:16px; border:2px solid #EEE; object-fit: cover;"><div style="flex:1;"><div style="font-weight:800; font-size:15px; color:#000;">${u.username}</div><div style="font-size:12px; color:#666; font-weight:600; margin-top:2px;">Kills: ${u.kills||0} | Matches: ${u.matches||0}</div></div><div style="text-align:right;"><div style="font-size:11px; color:#999; font-weight:700;">EARNINGS</div><div style="font-weight:800; font-size:16px; color:var(--color-orange);"><i class="fa-solid fa-coins text-gold"></i> ${u.winnings||0}</div></div></div>`).join('') : '<div style="text-align:center; color:#999; padding:40px; font-weight:600;">No rankings yet.</div>'; };
 
        
         // EARN HUB (Spin Wheel Only)
@@ -858,11 +928,12 @@
             const p =[1, 2, 3, 10, 5, 1]; 
             const rand = Math.random(); 
             let w = 0; 
-            if(rand < 0.01) w = 3; 
-            else if(rand < 0.03) w = 4; 
-            else if(rand < 0.05) w = 2; 
-            else if(rand < 0.35) w = 1; 
-            else w = (Math.random() < 0.5) ? 0 : 5; 
+            // 95% Controlled Probability Math
+            if(rand < 0.95) w = (Math.random() < 0.5) ? 0 : 5; // 1 Coin (95%)
+            else if(rand < 0.985) w = 1; // 2 Coins (3.5%)
+            else if(rand < 0.995) w = 2; // 3 Coins (1%)
+            else if(rand < 0.9975) w = 4; // 5 Coins (0.25%)
+            else w = 3; // 10 Coins (0.25%)
 
             const prize = p[w]; 
             const arcDeg = 360/6; 
@@ -906,15 +977,15 @@
         };
 
         let heroSlideIndex=0, heroSlideInterval;
-        const renderHero = () => { const list = Object.values(window.appData.banners||{}).filter(b=>b.active!=='false').sort((a,b)=>(parseInt(a.sortOrder)||0)-(parseInt(b.sortOrder)||0)); const slider=$('hero-slider'); if(list.length){ slider.innerHTML=list.map(b=>`<div style="min-width:100%; aspect-ratio: 16 / 9; height: auto; scroll-snap-align:center; border-radius:8px; overflow:hidden; cursor:pointer; box-shadow:0 4px 8px rgba(0,0,0,0.3); background-color: var(--color-navy-dark);" onclick="vibrate(10); ${(b.link || b.url) ? `window.open('${b.link || b.url}','_blank')`:''}"><img loading="eager" decoding="async" fetchpriority="high" src="${resolveImageUrl(b.img)}" class="skeleton" onload="this.classList.remove('skeleton')" style="width:100%; height:100%; object-fit:cover;"></div>`).join(''); clearInterval(heroSlideInterval); heroSlideInterval=setInterval(()=>{if(!slider.children.length)return; heroSlideIndex=(heroSlideIndex+1)%slider.children.length; slider.scrollTo({left:slider.children[heroSlideIndex].offsetLeft, behavior:'smooth'});}, 4000); }else slider.innerHTML=''; };
-        const renderCategories = () => { const list=Object.entries(window.appData.categories||{}).filter(([_,c])=>c.active!=='false').sort((a,b)=>(parseInt(a[1].sortOrder)||0)-(parseInt(b[1].sortOrder)||0)); $('category-grid').innerHTML=list.length?list.map(([id,c])=>`<div style="aspect-ratio: 1 / 1; height: auto; border-radius:8px; overflow:hidden; position:relative; cursor:pointer; background-color: var(--color-navy-dark); box-shadow:0 4px 6px rgba(0,0,0,0.2);" onclick="vibrate(10); openCategory('${id}')"><img loading="eager" decoding="async" fetchpriority="high" src="${resolveImageUrl(c.img)}" class="skeleton" onload="this.classList.remove('skeleton')" style="width:100%; height:100%; object-fit:cover; opacity:0.7;"><div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.8); padding:6px; text-align:center; color:#FFF; font-size:11px; font-weight:800; text-transform:uppercase;">${c.name}</div></div>`).join(''):''; };
+        const renderHero = () => { const list = Object.values(window.appData.banners||{}).filter(b=>b.active!=='false').sort((a,b)=>(parseInt(a.sortOrder)||0)-(parseInt(b.sortOrder)||0)); const slider=$('hero-slider'); if(list.length){ slider.innerHTML=list.map(b=>`<div style="min-width:100%; aspect-ratio: 16 / 9; height: auto; scroll-snap-align:center; border-radius:8px; overflow:hidden; cursor:pointer; box-shadow:0 4px 8px rgba(0,0,0,0.3); background-color: var(--color-navy-dark); position: relative;" onclick="vibrate(10); ${(b.link || b.url) ? `window.open('${b.link || b.url}','_blank')`:''}"><img loading="eager" decoding="async" fetchpriority="high" src="${resolveImageUrl(b.img)}" onerror="this.onerror=null; this.src='./logo.png';" class="skeleton" onload="this.classList.remove('skeleton')" style="width:100%; height:100%; object-fit:cover; object-position:center; display:block;"></div>`).join(''); clearInterval(heroSlideInterval); heroSlideInterval=setInterval(()=>{if(!slider.children.length)return; heroSlideIndex=(heroSlideIndex+1)%slider.children.length; slider.scrollTo({left:slider.children[heroSlideIndex].offsetLeft, behavior:'smooth'});}, 4000); }else slider.innerHTML=''; };
+        const renderCategories = () => { const list=Object.entries(window.appData.categories||{}).filter(([_,c])=>c.active!=='false').sort((a,b)=>(parseInt(a[1].sortOrder)||0)-(parseInt(b[1].sortOrder)||0)); $('category-grid').innerHTML=list.length?list.map(([id,c])=>`<div style="aspect-ratio: 1 / 1; height: auto; border-radius:8px; overflow:hidden; position:relative; cursor:pointer; background-color: var(--color-navy-dark); box-shadow:0 4px 6px rgba(0,0,0,0.2);" onclick="vibrate(10); openCategory('${id}')"><img loading="eager" decoding="async" fetchpriority="high" src="${resolveImageUrl(c.img)}" onerror="this.onerror=null; this.src='./logo.png';" class="skeleton" onload="this.classList.remove('skeleton')" style="width:100%; height:100%; object-fit:cover; object-position:center; display:block; opacity:0.7;"><div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.8); padding:6px; text-align:center; color:#FFF; font-size:11px; font-weight:800; text-transform:uppercase;">${c.name}</div></div>`).join(''):''; };
 
         const generateCard = (id, t) => {
             const joined=t.joined||0; const prog=t.totalSlots>0?(joined/t.totalSlots)*100:0; const isFull=joined>=t.totalSlots; const isMine=t.players&&t.players[userData.uid]; const dateStr=new Date(t.time).toLocaleString('en-IN', {day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit'});
             let btnHtml = '';
             if(t.status==='Upcoming'){ if(isMine) btnHtml=`<button class="btn btn-purple" style="padding:10px 24px; font-size:14px; max-width:max-content;" onclick="event.stopPropagation(); window.openPostJoinDashboard('${id}')">DASHBOARD</button>`; else if(isFull) btnHtml=`<button class="btn" style="background:var(--danger); color:#FFF; padding:10px 24px; font-size:14px; max-width:max-content;" onclick="event.stopPropagation();">FULL</button>`; else btnHtml=`<button class="btn btn-purple" style="padding:10px 32px; font-size:14px; max-width:max-content;" onclick="event.stopPropagation(); window.startJoinProcess('${id}')">JOIN NOW</button>`; }
             else btnHtml=`<button class="btn" style="background:#999; color:#FFF; padding:10px 24px; font-size:14px; max-width:max-content;" onclick="event.stopPropagation();">${t.status}</button>`;
-            return `<div style="background:#FFF; border:1px solid #E0E0E0; border-radius:8px; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1); cursor:pointer;" onclick="vibrate(10); openTournamentDetail('${id}')"><div style="aspect-ratio: 16 / 9; height: auto; position:relative; background-color: var(--color-navy-dark);"><img loading="eager" decoding="async" fetchpriority="high" src="${resolveImageUrl(t.img)}" class="skeleton" onload="this.classList.remove('skeleton')" style="width:100%; height:100%; object-fit:cover; opacity:0.9;"><div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,0.9)); padding:12px; font-size:11px; color:#FFF; text-transform:uppercase; font-weight:800;">${t.title}</div></div><div style="padding:16px;"><p style="font-size:12px; color:#666; margin:0 0 16px 0; font-weight:700;"><i class="fa-regular fa-clock"></i> ${dateStr}</p><div style="display:flex; justify-content:space-between; text-align:center; margin-bottom:16px;"><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">PRIZE POOL</div><div style="font-size:16px; font-weight:800; color:#000;"><i class="fa-solid fa-coins text-gold"></i> ${t.prizePool}</div></div><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">PER KILL</div><div style="font-size:16px; font-weight:800; color:#000;"><i class="fa-solid fa-coins text-gold"></i> ${t.perKill}</div></div><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">ENTRY FEE</div><div style="font-size:16px; font-weight:800; color:#000;"><i class="fa-solid fa-coins text-gold"></i> ${t.entryFee}</div></div></div><div style="display:flex; justify-content:space-between; text-align:center; border-bottom:1px solid #EEE; padding-bottom:16px; margin-bottom:16px;"><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">TEAM</div><div style="font-size:14px; font-weight:800; color:#333;">${t.teamSize||'Duo'}</div></div><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">MAP</div><div style="font-size:14px; font-weight:800; color:#333;">${t.map||'Bermuda'}</div></div></div><div style="display:flex; justify-content:space-between; align-items:center;"><div style="flex:1; margin-right:16px;"><div style="width:100%; height:6px; background:#EEE; border-radius:3px; overflow:hidden;"><div style="height:100%; background:var(--color-orange); width:${prog}%;"></div></div><div style="font-size:12px; color:#333; margin-top:6px; font-weight:700;">${joined}/${t.totalSlots} Slots Filled</div></div>${btnHtml}</div></div></div>`;
+            return `<div style="background:#FFF; border:1px solid #E0E0E0; border-radius:8px; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1); cursor:pointer;" onclick="vibrate(10); openTournamentDetail('${id}')"><div style="aspect-ratio: 16 / 9; height: auto; position:relative; background-color: var(--color-navy-dark); overflow: hidden;"><img loading="eager" decoding="async" fetchpriority="high" src="${resolveImageUrl(t.img)}" onerror="this.onerror=null; this.src='./logo.png';" class="skeleton" onload="this.classList.remove('skeleton')" style="width:100%; height:100%; object-fit:cover; object-position:center; display:block; opacity:0.9;"><div style="position:absolute; bottom:0; left:0; right:0; background:linear-gradient(transparent,rgba(0,0,0,0.9)); padding:12px; font-size:11px; color:#FFF; text-transform:uppercase; font-weight:800;">${t.title}</div></div><div style="padding:16px;"><p style="font-size:12px; color:#666; margin:0 0 16px 0; font-weight:700;"><i class="fa-regular fa-clock"></i> ${dateStr}</p><div style="display:flex; justify-content:space-between; text-align:center; margin-bottom:16px;"><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">PRIZE POOL</div><div style="font-size:16px; font-weight:800; color:#000;"><i class="fa-solid fa-coins text-gold"></i> ${t.prizePool}</div></div><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">PER KILL</div><div style="font-size:16px; font-weight:800; color:#000;"><i class="fa-solid fa-coins text-gold"></i> ${t.perKill}</div></div><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">ENTRY FEE</div><div style="font-size:16px; font-weight:800; color:#000;"><i class="fa-solid fa-coins text-gold"></i> ${t.entryFee}</div></div></div><div style="display:flex; justify-content:space-between; text-align:center; border-bottom:1px solid #EEE; padding-bottom:16px; margin-bottom:16px;"><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">TEAM</div><div style="font-size:14px; font-weight:800; color:#333;">${t.teamSize||'Duo'}</div></div><div><div style="font-size:11px; color:#999; font-weight:800; margin-bottom:4px;">MAP</div><div style="font-size:14px; font-weight:800; color:#333;">${t.map||'Bermuda'}</div></div></div><div style="display:flex; justify-content:space-between; align-items:center;"><div style="flex:1; margin-right:16px;"><div style="width:100%; height:6px; background:#EEE; border-radius:3px; overflow:hidden;"><div style="height:100%; background:var(--color-orange); width:${prog}%;"></div></div><div style="font-size:12px; color:#333; margin-top:6px; font-weight:700;">${joined}/${t.totalSlots} Slots Filled</div></div>${btnHtml}</div></div></div>`;
         };
 
         window.openCategory = id => { const c=window.appData.categories[id]; if(!c)return; activeCategoryName=c.name; $('cd-title').innerText=c.name; setCatTab('Upcoming'); navTo('screen-category-detail'); };
@@ -950,8 +1021,8 @@
             $('td-schedule-text').innerText=new Date(t.time).toLocaleString('en-IN', {day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
             $('td-joined-count').innerText=t.joined||0;
             const pArr=Object.values(t.players||{}).sort((a,b)=>a.slot-b.slot);
-            $('td-players-list').innerHTML = pArr.length ? pArr.map(p => `<div style="display:flex; align-items:center; background:#FFF; border-radius:12px; padding:12px 16px; margin-bottom:12px; border:1px solid #E0E0E0; box-shadow:0 2px 5px rgba(0,0,0,0.05); transition:transform 0.2s;"><div style="width:40px; height:40px; background:var(--color-purple); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#FFF; font-weight:800; font-size:14px; margin-right:16px; box-shadow:0 2px 8px rgba(98,0,238,0.3);">#${p.slot}</div><img loading="lazy" decoding="async" src="${getAvatar(p.username)}" class="skeleton" onload="this.classList.remove('skeleton')" style="width:44px; height:44px; border-radius:50%; margin-right:16px; border:2px solid #EEE;"><div style="font-weight:800; font-size:16px; color:#333; flex:1;">${p.username}</div></div>`).join('') : '<div style="padding:40px 20px; text-align:center; color:#999; font-weight:600;"><i class="fa-solid fa-users" style="font-size:32px; margin-bottom:12px; color:#CCC;"></i><br>No players joined yet.</div>';
-            if(t.status==='Completed'){ $('td-tab-leaderboard').classList.remove('hidden'); document.querySelector(`.td-tab-btn[data-tab="leaderboard"]`).style.display='block'; let tp=pArr.slice(0,10); $('td-leaderboard-content').innerHTML=tp.length?tp.map((p,i)=>`<div style="padding:16px; border-bottom:1px solid #E0E0E0; display:flex; align-items:center; gap:16px;"><div style="font-size:16px; font-weight:800; color:#333; width:24px;">#${i+1}</div><img loading="lazy" decoding="async" src="${getAvatar(p.username)}" style="width:36px; height:36px; border-radius:50%;"><span style="font-weight:800; font-size:15px; color:#000;">${p.username}</span></div>`).join(''):'<div style="padding:40px; color:#999; text-align:center;">Results not updated.</div>'; }
+            $('td-players-list').innerHTML = pArr.length ? pArr.map(p => `<div style="display:flex; align-items:center; background:#FFF; border-radius:12px; padding:12px 16px; margin-bottom:12px; border:1px solid #E0E0E0; box-shadow:0 2px 5px rgba(0,0,0,0.05); transition:transform 0.2s;"><div style="width:40px; height:40px; background:var(--color-purple); border-radius:8px; display:flex; align-items:center; justify-content:center; color:#FFF; font-weight:800; font-size:14px; margin-right:16px; box-shadow:0 2px 8px rgba(98,0,238,0.3);">#${p.slot}</div><img loading="lazy" decoding="async" src="${getAvatar(p.username)}" onerror="this.onerror=null; this.src='./logo.png';" class="skeleton" onload="this.classList.remove('skeleton')" style="width:44px; height:44px; border-radius:50%; margin-right:16px; border:2px solid #EEE; object-fit: cover;"><div style="font-weight:800; font-size:16px; color:#333; flex:1;">${p.username}</div></div>`).join('') : '<div style="padding:40px 20px; text-align:center; color:#999; font-weight:600;"><i class="fa-solid fa-users" style="font-size:32px; margin-bottom:12px; color:#CCC;"></i><br>No players joined yet.</div>';
+            if(t.status==='Completed'){ $('td-tab-leaderboard').classList.remove('hidden'); document.querySelector(`.td-tab-btn[data-tab="leaderboard"]`).style.display='block'; let tp=pArr.slice(0,10); $('td-leaderboard-content').innerHTML=tp.length?tp.map((p,i)=>`<div style="padding:16px; border-bottom:1px solid #E0E0E0; display:flex; align-items:center; gap:16px;"><div style="font-size:16px; font-weight:800; color:#333; width:24px;">#${i+1}</div><img loading="lazy" decoding="async" src="${getAvatar(p.username)}" onerror="this.onerror=null; this.src='./logo.png';" style="width:36px; height:36px; border-radius:50%; object-fit: cover;"><span style="font-weight:800; font-size:15px; color:#000;">${p.username}</span></div>`).join(''):'<div style="padding:40px; color:#999; text-align:center;">Results not updated.</div>'; }
             else document.querySelector(`.td-tab-btn[data-tab="leaderboard"]`).style.display='none';
             const isMine=t.players&&userData&&t.players[userData.uid];
             if(isMine&&t.status!=='Completed'){ 
@@ -1070,10 +1141,12 @@
                 
                 $('deposit-state-1').classList.add('hidden');
                 $('deposit-state-2').classList.remove('hidden');
-                let timerInt = setInterval(async () => {
+                
+                if(window.depositTimerInt) clearInterval(window.depositTimerInt);
+                window.depositTimerInt = setInterval(async () => {
                     const diff = lockedUntil - Date.now();
                     if (diff <= 0) {
-                        clearInterval(timerInt);
+                        clearInterval(window.depositTimerInt);
                         if (depositListenerUnsubscribe) {
                             depositListenerUnsubscribe();
                             depositListenerUnsubscribe = null;
@@ -1097,7 +1170,7 @@
                             depositListenerUnsubscribe();
                             depositListenerUnsubscribe = null;
                         }
-                        clearInterval(timerInt);
+                        clearInterval(window.depositTimerInt);
                         try {
                             const userBalanceSnap = await get(ref(db, `users/${currentUser.uid}/balance`));
                             const currentBal = userBalanceSnap.val() || 0;
