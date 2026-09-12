@@ -1122,7 +1122,7 @@
         let depositListenerUnsubscribe = null;
         window.processDepositAmount = async () => {
             const amt = parseInt($('deposit-amt').value);
-            if (!amt || amt < 10) return showToast('Min deposit ₹10.', 'error');
+            if (!amt || amt < 1) return showToast('Min deposit ₹1.', 'error');
             setLoadingBtn('btn-deposit-init', true, '');
             try {
                 const upiString = "upi://pay?pa=9266135090@ptyes&pn=Proplay&cu=INR&am=" + amt;
