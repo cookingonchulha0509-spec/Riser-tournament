@@ -16,14 +16,32 @@
             --success: #1E8E3E; --danger: #D93025; --nav-height: 60px;
         }
 
+        /* FIXED: Zero white background leakage, horizontal slide prevention, and touch-action limits */
+        html, body { 
+            width: 100vw; height: 100dvh; overflow: hidden; overscroll-behavior: none; position: fixed; inset: 0; 
+            touch-action: manipulation; user-select: none; -webkit-user-select: none; background: var(--color-navy-dark); 
+        }
+        
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; font-family: 'Inter', sans-serif; -webkit-font-smoothing: antialiased; }
-        body { background-color: var(--bg-light); color: var(--text-dark); overflow: hidden; letter-spacing: -0.01em; }
-        #app-container { width: 100%; max-width: 480px; margin: 0 auto; height: 100vh; height: 100dvh; position: relative; overflow: hidden; background: var(--bg-light); box-shadow: 0 0 40px rgba(0,0,0,0.1); display: block; }
+        
+        body { color: var(--text-dark); letter-spacing: -0.01em; }
+        
+        #app-container { 
+            width: 100%; max-width: 480px; margin: 0 auto; height: 100dvh; position: relative; overflow: hidden; 
+            background: var(--color-navy-dark); box-shadow: 0 0 40px rgba(0,0,0,0.1); display: block; 
+            touch-action: pan-y; -webkit-overflow-scrolling: touch; transform: translateZ(0); 
+        }
+        
         ::-webkit-scrollbar { display: none; }
         .hidden { display: none !important; }
 
-        .screen { position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding-bottom: calc(var(--nav-height) + 40px); opacity: 0; pointer-events: none; transition: 0.3s ease; transform: translateX(20px); z-index: 10; -webkit-overflow-scrolling: touch; background: var(--bg-light); }
-        .screen.active { opacity: 1; pointer-events: auto; z-index: 20; transform: translateX(0); }
+        /* FIXED: Replaced horizontal slide with pure fade to eliminate WebView jitter */
+        .screen { 
+            position: absolute; inset: 0; overflow-y: auto; overflow-x: hidden; padding-bottom: calc(var(--nav-height) + 40px); 
+            opacity: 0; pointer-events: none; transition: opacity 0.2s ease; z-index: 10; 
+            -webkit-overflow-scrolling: touch; background: var(--bg-light); touch-action: pan-y; 
+        }
+        .screen.active { opacity: 1; pointer-events: auto; z-index: 20; }
         .screen-full { padding-bottom: 0 !important; z-index: 100; }
 
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -38,8 +56,12 @@
 
         .text-gold { color: #FFC107 !important; }
 
-        .btn { border: none; padding: 14px 20px; border-radius: 4px; font-weight: 800; font-size: 15px; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; transition: 0.2s ease; box-sizing: border-box; text-transform: uppercase; }
-        .btn:active:not(:disabled) { transform: scale(0.98); }
+        /* FIXED: Removed scale() transform on active state to prevent mobile tap relayout bugs */
+        .btn { 
+            border: none; padding: 14px 20px; border-radius: 4px; font-weight: 800; font-size: 15px; cursor: pointer; width: 100%; display: flex; justify-content: center; align-items: center; gap: 8px; transition: opacity 0.2s ease; box-sizing: border-box; text-transform: uppercase; 
+            touch-action: manipulation; transform: translateZ(0); will-change: opacity; 
+        }
+        .btn:active:not(:disabled) { opacity: 0.85; }
         .btn:disabled { opacity: 0.6; cursor: not-allowed; background: #E8ECEF; color: #9A9FA5; }
         .btn-purple { background: var(--color-purple); color: #FFF; }
         .btn-mint { background: var(--color-mint); color: #FFF; }
@@ -86,18 +108,20 @@
         
         .dashboard-box { background:#FFF; padding:20px; border-radius:12px; box-shadow:0 4px 10px rgba(0,0,0,0.05); margin-bottom:20px; border:1px solid #E0E0E0; }
         
-        /* Skeleton Loader Styles (Native Shimmer) */
+        /* Skeleton Loader Styles (Native Shimmer) Optimized */
         .skeleton { 
             background: linear-gradient(90deg, #E0E0E0 25%, #F0F0F0 50%, #E0E0E0 75%); 
             background-size: 400% 100%; 
             animation: shimmer 1.2s ease-in-out infinite; 
             border-radius: 4px; 
+            will-change: background-position;
         }
         .skeleton-dark { 
             background: linear-gradient(90deg, #2A2F42 25%, #353B52 50%, #2A2F42 75%); 
             background-size: 400% 100%; 
             animation: shimmer 1.2s ease-in-out infinite; 
             border-radius: 4px; 
+            will-change: background-position;
         }
         @keyframes shimmer { 
             0% { background-position: 100% 0; } 
@@ -225,7 +249,45 @@
                     <div class="tab-btn" data-status="Completed" onclick="vibrate(10); setPlayTab('Completed')">RESULTS</div>
                 </div>
                 <div style="padding: 16px;" id="play-tournaments-list">
-                    <!-- Native Skeleton Initial State -->
+                    <!-- Native Skeleton Initial State (3 smooth cards) -->
+                    <div style="background:#FFF; border:1px solid #E0E0E0; border-radius:8px; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                        <div class="skeleton" style="aspect-ratio:16/9; width:100%;"></div>
+                        <div style="padding:16px;">
+                            <div class="skeleton" style="width:40%; height:12px; margin-bottom:16px; border-radius:4px;"></div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid #EEE; padding-bottom:16px;">
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div class="skeleton" style="width:50%; height:20px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:100px; height:40px; border-radius:4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background:#FFF; border:1px solid #E0E0E0; border-radius:8px; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                        <div class="skeleton" style="aspect-ratio:16/9; width:100%;"></div>
+                        <div style="padding:16px;">
+                            <div class="skeleton" style="width:40%; height:12px; margin-bottom:16px; border-radius:4px;"></div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid #EEE; padding-bottom:16px;">
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div class="skeleton" style="width:50%; height:20px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:100px; height:40px; border-radius:4px;"></div>
+                            </div>
+                        </div>
+                    </div>
                     <div style="background:#FFF; border:1px solid #E0E0E0; border-radius:8px; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
                         <div class="skeleton" style="aspect-ratio:16/9; width:100%;"></div>
                         <div style="padding:16px;">
@@ -283,8 +345,14 @@
                             <div style="flex: 1;"><h3 id="stat-matches" style="font-size: 22px; color: #000; font-weight:800; margin-bottom: 4px;">0</h3><small style="color:#666; font-weight: 700; font-size:11px;">MATCHES</small></div>
                         </div>
                     </div>
-                    <button class="btn" style="background:#25D366; color:#FFF; margin-bottom: 16px; font-weight:800;" onclick="vibrate(10); window.open('https://wa.me/918860204675', '_blank')"><i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Help & Support</button>
-                    <button class="btn btn-purple" style="margin-bottom: 32px;" onclick="vibrate(10); openPrivacyModal()">Privacy Policy</button>
+                    
+                    <!-- DUAL WHATSAPP SUPPORT -->
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+                        <button class="btn" style="background:#25D366; color:#FFF; font-weight:800; box-shadow: 0 4px 12px rgba(37,211,102,0.3);" onclick="vibrate(10); window.open('https://wa.me/919266135090?text=Hello%20TruthBattle%20Support', '_blank')"><i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Support 1 (Primary)</button>
+                        <button class="btn" style="background:#128C7E; color:#FFF; font-weight:800; box-shadow: 0 4px 12px rgba(18,140,126,0.3);" onclick="vibrate(10); window.open('https://wa.me/918860204675?text=Hello%20TruthBattle%20Support', '_blank')"><i class="fa-brands fa-whatsapp" style="font-size: 20px;"></i> Support 2 (Backup)</button>
+                    </div>
+
+                    <button class="btn btn-purple" style="margin-bottom: 32px;" onclick="vibrate(10); openPrivacyModal()">Privacy & Rules</button>
                     <button class="btn" style="background: transparent; color: var(--danger); border: 1px solid var(--danger);" onclick="vibrate(10); logoutApp()">Sign Out</button>
                 </div>
             </div>
@@ -470,7 +538,7 @@
                             </div>
                         </div>
                         <div style="display: inline-block; padding: 12px; background: #FFF; border-radius: 16px; border: 1.5px dashed #EBEBEB; margin-bottom: 20px;">  
-                            <img id="deposit-qr-img" class="skeleton" onload="this.classList.remove('skeleton')" src="" alt="UPI QR" style="width: 160px; height: 160px; object-fit: cover; border-radius: 10px; filter: contrast(1.05);">  
+                            <img id="deposit-qr-img" class="skeleton" onload="this.classList.remove('skeleton')" src="" onerror="this.onerror=null; this.src='./logo.png';" alt="UPI QR" style="width: 160px; height: 160px; object-fit: cover; border-radius: 10px; filter: contrast(1.05);">  
                         </div>  
                         <div style="padding: 12px; background: #F8F9FA; border-radius: 14px; border: 1px solid #EBEBEB; max-width: 80%; margin: 0 auto;">  
                             <div style="font-size: 10px; color: #888; font-weight: 800; text-transform: uppercase; margin-bottom: 2px;">Transfer Exactly</div>  
@@ -505,9 +573,21 @@
         
         <!-- DYNAMIC PRIVACY POLICY MODAL -->
         <div id="modal-privacy" class="screen screen-full" style="z-index: 5000; background: #FFF;">
-            <div class="top-header"><i class="fa-solid fa-arrow-left" onclick="vibrate(10); history.back()"></i><h2>Privacy Policy</h2></div>
+            <div class="top-header"><i class="fa-solid fa-arrow-left" onclick="vibrate(10); history.back()"></i><h2>Privacy & Rules</h2></div>
             <div style="padding: 24px;" id="privacy-content">
-                <p style="font-size:14px; color:#444; line-height:1.6; font-weight: 500;">Loading legal documents...</p>
+                <h3 style="font-size:16px; color:#1C2331; font-weight:800; margin-bottom:8px;">1. Privacy Policy & Data Security</h3>
+                <p style="font-size:13px; color:#444; line-height:1.6; font-weight:500; margin-bottom:16px;">Your account details, including email and payment information, are strictly encrypted. We maintain a zero-sharing policy with third parties. All personal data is securely handled exclusively for match verification and withdrawals.</p>
+                
+                <h3 style="font-size:16px; color:#1C2331; font-weight:800; margin-bottom:8px;">2. Fair Play & Anti-Cheat Policy</h3>
+                <p style="font-size:13px; color:#444; line-height:1.6; font-weight:500; margin-bottom:16px;">We strictly prohibit the use of emulators, scripts, mods, or any third-party tools that provide an unfair advantage. Any player found violating this rule will face an instant, permanent account ban without refund.</p>
+                
+                <h3 style="font-size:16px; color:#1C2331; font-weight:800; margin-bottom:8px;">3. 100% Refund Guarantee</h3>
+                <p style="font-size:13px; color:#444; line-height:1.6; font-weight:500; margin-bottom:16px;">If a match is cancelled by the admin or fails to fill the required slots, the exact entry fee will be automatically and fully refunded to your TruthBattle wallet.</p>
+                
+                <h3 style="font-size:16px; color:#1C2331; font-weight:800; margin-bottom:8px;">4. Withdrawal Rules & Verification</h3>
+                <p style="font-size:13px; color:#444; line-height:1.6; font-weight:500; margin-bottom:24px;">The minimum withdrawal limit is 25 coins. Standard processing time is 10-15 minutes, subject to UTR verification by our payment partners. Ensure your UPI details are exactly correct before submitting a request.</p>
+                
+                <button class="btn btn-purple" style="padding:16px; font-size:16px; width:100%; box-shadow: 0 4px 12px rgba(98,0,238,0.2);" onclick="vibrate(10); history.back()">Close & Back</button>
             </div>
         </div>
 
@@ -716,10 +796,50 @@
                 const notifs = snap.val() || {}; const list = Object.values(notifs).sort((a,b) => (b.time||0) - (a.time||0));
                 $('global-notif-list').innerHTML = list.length ? list.map(n => `<div class="dashboard-box"><div class="flex-between" style="margin-bottom:8px;"><h4 style="font-weight:800; color:#000; font-size:15px;">${n.title}</h4><span style="font-size:11px; color:#999; font-weight:700;">${new Date(n.time).toLocaleDateString()}</span></div><p style="font-size:13px; color:#666; font-weight:600;">${n.message}</p></div>`).join('') : '<div style="text-align:center; color:#999; padding:40px; font-weight:600;"><i class="fa-solid fa-bell-slash" style="font-size:32px; color:#CCC; margin-bottom:12px;"></i><br>No notifications.</div>';
             });
-            // Fetch Dynamic App Settings (Privacy Policy etc)
             onValue(ref(db, 'settings/app'), snap => {
                 window.appSettings = snap.val() || {};
-                if($('privacy-content')) $('privacy-content').innerHTML = window.appSettings.privacy || '<p>Privacy policy is not set yet.</p>';
+            });
+
+            // GLOBAL 2-MINUTE DEPOSIT PAYMENT ENGINE (Never lose coins on quit/back)
+            onValue(ref(db, 'gateway_lock'), async snap => {
+                if(!currentUser) return;
+                const l = snap.val();
+                if (l && l.uid === currentUser.uid && l.status === 'success') {
+                    if (window.processingDeposit) return;
+                    window.processingDeposit = true;
+                    try {
+                        const userBalanceSnap = await get(ref(db, `users/${currentUser.uid}/balance`));
+                        const currentBal = userBalanceSnap.val() || 0;
+                        const updates = {};
+                        updates[`users/${currentUser.uid}/balance`] = currentBal + l.amount;
+                        updates[`walletHistory/${currentUser.uid}/${push(ref(db, 'walletHistory')).key}`] = {
+                            amount: l.amount,
+                            type: 'up',
+                            note: 'Deposit Success',
+                            date: new Date().toISOString()
+                        };
+                        updates['gateway_lock'] = null; // Clear lock instantly
+                        await update(ref(db), updates);
+                        
+                        localStorage.removeItem('active_deposit');
+                        showToast(`🎉 Payment Confirmed! +${l.amount} Coins added!`, 'success');
+                        vibrate(200);
+
+                        if (currentScreen === 'screen-deposit') {
+                            $('deposit-success-amount').innerHTML = `+<i class="fa-solid fa-coins"></i> ${l.amount} added!`;
+                            $('deposit-success-anim').classList.add('active');
+                            setTimeout(() => {
+                                $('deposit-success-anim').classList.remove('active');
+                                if (currentScreen === 'screen-deposit') history.back();
+                            }, 2500);
+                        }
+                    } catch (error) {
+                        showToast('Failed to credit coins. Contact support.', 'error');
+                        await set(ref(db, 'gateway_lock'), null);
+                    } finally {
+                        window.processingDeposit = false;
+                    }
+                }
             });
         };
 
@@ -815,7 +935,6 @@
             } 
         };
         
-        // Ghost Auth Fix: Complete reload clears all states and variables perfectly
         window.logoutApp = async () => { 
             try {
                 await signOut(auth); 
@@ -870,16 +989,14 @@
 
         window.closePersonalNotif = async () => { $('modal-personal-notif').classList.remove('active'); await update(ref(db, `users/${userData.uid}/notification`), { read: true, active: false }); };
 
-        // Deposit Cleanup to fix theme corruption on back nav
+        // Deposit Cleanup to fix theme corruption on back nav - DOES NOT KILL GLOBAL TIMER/LISTENER
         const cleanupDeposit = () => {
-            if (window.depositTimerInt) clearInterval(window.depositTimerInt);
-            if (depositListenerUnsubscribe) { depositListenerUnsubscribe(); depositListenerUnsubscribe = null; }
             $('deposit-state-1').classList.remove('hidden'); 
             $('deposit-state-2').classList.add('hidden');
             $('deposit-amt').value = '';
         };
 
-               // Navigation
+        // Navigation
         window.navTo = (targetId, isBack = false) => {
             if (currentScreen === 'screen-deposit' && targetId !== 'screen-deposit') cleanupDeposit();
             if(currentScreen === targetId) return;
@@ -900,7 +1017,7 @@
         window.renderLeaderboard = () => { $('leaderboard-list').innerHTML = window.appData.leaderboard.length ? window.appData.leaderboard.map((u,i) => `<div style="display:flex; align-items:center; background:#FFF; border-radius:12px; padding:16px; margin-bottom:12px; border:1px solid #E0E0E0;"><div style="font-size:18px; font-weight:800; width:40px; text-align:center; color:${i===0?'#FFD700':i===1?'#C0C0C0':i===2?'#CD7F32':'#333'};">${i<3 ? `<i class="fa-solid fa-medal"></i>` : `#${i+1}`}</div><img loading="lazy" decoding="async" src="${getAvatar(u.username)}" onerror="this.onerror=null; this.src='./logo.png';" class="skeleton" onload="this.classList.remove('skeleton')" style="width:44px; height:44px; border-radius:50%; margin-right:16px; border:2px solid #EEE; object-fit: cover;"><div style="flex:1;"><div style="font-weight:800; font-size:15px; color:#000;">${u.username}</div><div style="font-size:12px; color:#666; font-weight:600; margin-top:2px;">Kills: ${u.kills||0} | Matches: ${u.matches||0}</div></div><div style="text-align:right;"><div style="font-size:11px; color:#999; font-weight:700;">EARNINGS</div><div style="font-weight:800; font-size:16px; color:var(--color-orange);"><i class="fa-solid fa-coins text-gold"></i> ${u.winnings||0}</div></div></div>`).join('') : '<div style="text-align:center; color:#999; padding:40px; font-weight:600;">No rankings yet.</div>'; };
 
        
-        // EARN HUB (Spin Wheel Only)
+             // EARN HUB (Spin Wheel Only)
         const drawWheel = () => {
             const canvas = $('spin-wheel-canvas'); if(!canvas) return; const ctx = canvas.getContext('2d'); 
             const colors =['#6200EE', '#88D4C0', '#FF8C00', '#E91E63', '#00BCD4', '#4CAF50']; 
@@ -928,12 +1045,11 @@
             const p =[1, 2, 3, 10, 5, 1]; 
             const rand = Math.random(); 
             let w = 0; 
-            // 95% Controlled Probability Math
-            if(rand < 0.95) w = (Math.random() < 0.5) ? 0 : 5; // 1 Coin (95%)
-            else if(rand < 0.985) w = 1; // 2 Coins (3.5%)
-            else if(rand < 0.995) w = 2; // 3 Coins (1%)
-            else if(rand < 0.9975) w = 4; // 5 Coins (0.25%)
-            else w = 3; // 10 Coins (0.25%)
+            if(rand < 0.95) w = (Math.random() < 0.5) ? 0 : 5; 
+            else if(rand < 0.985) w = 1; 
+            else if(rand < 0.995) w = 2; 
+            else if(rand < 0.9975) w = 4; 
+            else w = 3; 
 
             const prize = p[w]; 
             const arcDeg = 360/6; 
@@ -1119,22 +1235,26 @@
 
         window.openDepositScreen = () => { $('deposit-amt').value=''; $('deposit-state-1').classList.remove('hidden'); $('deposit-state-2').classList.add('hidden'); navTo('screen-deposit'); };
         
-        let depositListenerUnsubscribe = null;
         window.processDepositAmount = async () => {
             const amt = parseInt($('deposit-amt').value);
-            if (!amt || amt < 1) return showToast('Min deposit ₹1.', 'error');
+            if (!amt || amt < 10) return showToast('Min deposit ₹10.', 'error');
             setLoadingBtn('btn-deposit-init', true, '');
             try {
                 const upiString = "upi://pay?pa=9266135090@ptyes&pn=Proplay&cu=INR&am=" + amt;
                 const lockRef = ref(db, 'gateway_lock');
                 const now = Date.now();
                 const lock = (await get(lockRef)).val();
+                
                 if (lock && lock.lockedUntil > now && lock.uid !== currentUser.uid) {
                     setLoadingBtn('btn-deposit-init', false, 'PROCEED TO PAY');
                     return showToast('Gateway busy. Please try again after some time.', 'error');
                 }
+                
                 const lockedUntil = now + 120000; 
                 await set(lockRef, { uid: currentUser.uid, amount: amt, status: 'waiting', lockedUntil, createdAt: now });
+                
+                // SAVE SESSION LOCALLY TO PREVENT COIN LOSS ON APP QUIT
+                localStorage.setItem('active_deposit', JSON.stringify({ uid: currentUser.uid, amount: amt, expiresAt: lockedUntil }));
                 
                 $('deposit-pay-amt').innerText = amt;
                 $('deposit-qr-img').src = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(upiString);
@@ -1147,62 +1267,30 @@
                     const diff = lockedUntil - Date.now();
                     if (diff <= 0) {
                         clearInterval(window.depositTimerInt);
-                        if (depositListenerUnsubscribe) {
-                            depositListenerUnsubscribe();
-                            depositListenerUnsubscribe = null;
-                        }
-                        showToast('Session expired.', 'error');
-                        history.back();
-                    } else {
-                        $('deposit-timer').innerText = `${String(Math.floor(diff/60000)).padStart(2,'0')}:${String(Math.floor((diff%60000)/1000)).padStart(2,'0')}`;
-                    }
-                }, 1000);
-                
-                if (depositListenerUnsubscribe) {
-                    depositListenerUnsubscribe();
-                    depositListenerUnsubscribe = null;
-                }
-                
-                depositListenerUnsubscribe = onValue(lockRef, async (snap) => {
-                    const l = snap.val();
-                    if (l && l.uid === currentUser.uid && l.status === 'success') {
-                        if (depositListenerUnsubscribe) {
-                            depositListenerUnsubscribe();
-                            depositListenerUnsubscribe = null;
-                        }
-                        clearInterval(window.depositTimerInt);
-                        try {
-                            const userBalanceSnap = await get(ref(db, `users/${currentUser.uid}/balance`));
-                            const currentBal = userBalanceSnap.val() || 0;
-                            const updates = {};
-                            updates[`users/${currentUser.uid}/balance`] = currentBal + l.amount;
-                            updates[`walletHistory/${currentUser.uid}/${push(ref(db, 'walletHistory')).key}`] = {
-                                amount: l.amount,
-                                type: 'up',
-                                note: 'Deposit Success',
-                                date: new Date().toISOString()
-                            };
-                            updates['gateway_lock'] = null;
-                            await update(ref(db), updates);
-                            $('deposit-success-amount').innerHTML = `+<i class="fa-solid fa-coins"></i> ${l.amount} added!`;
-                            $('deposit-success-anim').classList.add('active');
-                            setTimeout(() => {
-                                $('deposit-success-anim').classList.remove('active');
-                                history.back();
-                            }, 2500);
-                        } catch (error) {
-                            showToast('Failed to credit coins. Contact support.', 'error');
+                        // Clean up lock if it expired
+                        const currentLock = (await get(lockRef)).val();
+                        if (currentLock && currentLock.uid === currentUser.uid && currentLock.status === 'waiting') {
                             await set(lockRef, null);
                         }
+                        localStorage.removeItem('active_deposit');
+                        if (currentScreen === 'screen-deposit') {
+                            showToast('Session expired.', 'error');
+                            history.back();
+                        }
+                    } else {
+                        if ($('deposit-timer')) {
+                            $('deposit-timer').innerText = `${String(Math.floor(diff/60000)).padStart(2,'0')}:${String(Math.floor((diff%60000)/1000)).padStart(2,'0')}`;
+                        }
                     }
-                });
+                }, 1000);
             } catch (e) {
                 showToast('Gateway error. Please try again.', 'error');
             } finally {
                  setLoadingBtn('btn-deposit-init', false, 'PROCEED TO PAY');
             }
         };
-        window.openPrivacyModal = () => { $('modal-privacy').classList.add('active'); $('main-nav').classList.add('hidden-nav'); };
+        
+        window.openPrivacyModal = () => { vibrate(10); navTo('modal-privacy'); };
     </script>
 </body>
 </html>
