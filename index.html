@@ -47,15 +47,6 @@
         @keyframes slideUpFade { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         .animate-enter { animation: slideUpFade 0.4s ease forwards; opacity: 0; }
 
-        /* Cinematic Divine Animation for Event */
-        @keyframes cinematicReveal {
-            0% { opacity: 0; transform: scale(0.95) translateY(10px); filter: blur(8px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); }
-        }
-        .gc-cinematic-text {
-            animation: cinematicReveal 1.8s cubic-bezier(0.2, 1, 0.2, 1) forwards;
-        }
-
         .flex { display: flex; align-items: center; }
         .flex-between { display: flex; justify-content: space-between; align-items: center; }
 
@@ -139,44 +130,6 @@
     </style>
 </head>
 <body>
-
-    <!-- GANESH CHATURTHI SPECIAL AUDIO -->
-    <audio id="gc-audio" src="festive.mp3" loop preload="auto"></audio>
-
-    <!-- GANESH CHATURTHI SPLASH CELEBRATION (Premium Esports Dark Theme) -->
-    <div id="gc-splash" class="hidden" style="position: fixed; inset: 0; z-index: 999999; background: var(--color-navy-dark); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 24px; opacity: 0; transition: opacity 0.5s ease;">
-        <div style="position: relative; display: flex; justify-content: center; align-items: center; gap: 24px; margin-bottom: 36px;">
-            <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle at center, rgba(255, 215, 0, 0.15) 0%, rgba(255, 255, 255, 0.05) 40%, transparent 70%); border-radius: 50%; z-index: 1;"></div>
-            <img src="dipgif.gif" style="width: 48px; height: 48px; z-index: 2; mix-blend-mode: screen; filter: drop-shadow(0 0 10px rgba(255,215,0,0.2));">
-            <img src="ganeshji.png" style="width: 120px; height: 120px; z-index: 2; object-fit: contain; filter: drop-shadow(0 0 20px rgba(255,215,0,0.3));">
-            <img src="dipgif.gif" style="width: 48px; height: 48px; z-index: 2; mix-blend-mode: screen; filter: drop-shadow(0 0 10px rgba(255,215,0,0.2));">
-        </div>
-        <div class="gc-cinematic-text">
-            <h1 style="color: #FFFFFF; font-size: 32px; font-weight: 800; margin-bottom: 12px; text-shadow: 0 0 15px rgba(255,215,0,0.4); letter-spacing: -0.5px;">Happy Ganesh Chaturthi</h1>
-            <h2 style="color: #FFF; font-size: 16px; font-weight: 700; margin-bottom: 16px; letter-spacing: 3px; text-transform: uppercase;">Ganpati Bappa Morya</h2>
-            <p style="color: #A0AABF; font-size: 14px; font-weight: 500; margin-bottom: 48px; max-width: 320px; line-height: 1.6; margin-left: auto; margin-right: auto;">Wishing all players a joyful and blessed Ganesh Chaturthi.</p>
-        </div>
-        <button class="btn gc-cinematic-text" style="background: transparent; color: #FFF; padding: 16px 48px; border-radius: 100px; font-size: 14px; font-weight: 800; letter-spacing: 1px; border: 1px solid rgba(255,215,0,0.4); text-transform: uppercase; box-shadow: 0 4px 20px rgba(255,215,0,0.08); transition: all 0.3s ease; animation-delay: 0.2s;" onclick="closeGcSplash()">Enter App</button>
-    </div>
-
-    <!-- GANESH CHATURTHI EVENT NOTIFICATION MODAL (Premium Esports Dark Theme) -->
-    <div id="gc-modal" class="hidden" style="position: fixed; inset: 0; z-index: 999998; background: rgba(0,0,0,0.85); display: flex; align-items: flex-end; opacity: 0; transition: opacity 0.3s ease; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);">
-        <div style="background: var(--color-navy); width: 100%; max-width: 480px; margin: 0 auto; border-radius: 24px 24px 0 0; border-top: 1px solid rgba(255,215,0,0.2); padding: 32px 24px; text-align: center; position: relative; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.17, 0.67, 0.12, 0.99); box-shadow: 0 -10px 40px rgba(0,0,0,0.5);" id="gc-modal-content">
-            <i class="fa-solid fa-xmark" style="position: absolute; top: 20px; right: 20px; font-size: 20px; color: #A0AABF; cursor: pointer; padding: 8px;" onclick="closeGcModal()"></i>
-            
-            <div style="position: relative; display: flex; justify-content: center; align-items: center; gap: 16px; margin-bottom: 24px;">
-                <div style="position: absolute; width: 150px; height: 150px; background: radial-gradient(circle at center, rgba(255, 215, 0, 0.12) 0%, transparent 70%); border-radius: 50%; z-index: 1;"></div>
-                <img src="dipgif.gif" style="width: 32px; height: 32px; z-index: 2; mix-blend-mode: screen;">
-                <img src="ganeshji.png" style="width: 70px; height: 70px; z-index: 2; object-fit: contain; filter: drop-shadow(0 0 10px rgba(255,215,0,0.2));">
-                <img src="dipgif.gif" style="width: 32px; height: 32px; z-index: 2; mix-blend-mode: screen;">
-            </div>
-            
-            <h2 style="font-size: 22px; font-weight: 800; color: #FFF; margin-bottom: 8px; letter-spacing: 0.5px; text-shadow: 0 0 10px rgba(255,255,255,0.1);">Festive Special Event</h2>
-            <p style="font-size: 14px; color: #A0AABF; font-weight: 500; margin-bottom: 32px; line-height: 1.5;">Participate now to earn exclusive rewards.</p>
-            
-            <button class="btn" style="background: var(--color-navy-dark); color: #FFF; padding: 16px; width: 100%; font-size: 14px; font-weight: 800; letter-spacing: 1px; border-radius: 12px; border: 1px solid rgba(255,215,0,0.3); text-transform: uppercase; box-shadow: 0 4px 15px rgba(0,0,0,0.3);" onclick="goToGcEvent()">Participate Now</button>
-        </div>
-    </div>
 
     <div id="global-loader">
         <div class="minimal-spinner" style="margin-bottom: 16px;"></div>
@@ -316,6 +269,44 @@
                             </div>
                         </div>
                     </div>
+                    <div style="background:#FFF; border:1px solid #E0E0E0; border-radius:8px; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                        <div class="skeleton" style="aspect-ratio:16/9; width:100%;"></div>
+                        <div style="padding:16px;">
+                            <div class="skeleton" style="width:40%; height:12px; margin-bottom:16px; border-radius:4px;"></div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid #EEE; padding-bottom:16px;">
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div class="skeleton" style="width:50%; height:20px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:100px; height:40px; border-radius:4px;"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="background:#FFF; border:1px solid #E0E0E0; border-radius:8px; overflow:hidden; margin-bottom:20px; box-shadow:0 4px 10px rgba(0,0,0,0.1);">
+                        <div class="skeleton" style="aspect-ratio:16/9; width:100%;"></div>
+                        <div style="padding:16px;">
+                            <div class="skeleton" style="width:40%; height:12px; margin-bottom:16px; border-radius:4px;"></div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px;">
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:28%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; margin-bottom:16px; border-bottom:1px solid #EEE; padding-bottom:16px;">
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:40%; height:36px; border-radius:4px;"></div>
+                            </div>
+                            <div style="display:flex; justify-content:space-between; align-items:center;">
+                                <div class="skeleton" style="width:50%; height:20px; border-radius:4px;"></div>
+                                <div class="skeleton" style="width:100px; height:40px; border-radius:4px;"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -330,56 +321,6 @@
                         <button id="btn-spin-open" class="btn btn-purple" style="box-shadow: 0 4px 12px rgba(98,0,238,0.2); transition:0.3s; padding: 16px; font-size: 15px;" onclick="vibrate(10); openSpinModal()">SPIN & WIN NOW</button>
                         <div id="spin-status" style="margin-top:20px; font-size:13px; font-weight:700; color:#88D4C0; text-transform:uppercase; letter-spacing: 1px;">Ready to Spin!</div>
                     </div>
-
-                    <!-- GANESH CHATURTHI EVENT SECTION (Premium Dark Theme Upgraded) -->
-                    <div id="gc-event-section" style="background: var(--color-navy); border: 1px solid rgba(255,215,0,0.15); border-radius: 16px; padding: 24px 20px; margin-top: 24px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); position: relative; overflow: hidden;">
-                        <div style="display: flex; align-items: center; justify-content: center; gap: 12px; margin-bottom: 16px;">
-                            <img src="dipgif.gif" style="width: 24px; height: 24px; mix-blend-mode: screen;">
-                            <h3 style="font-size: 16px; font-weight: 800; color: #FFF; text-transform: uppercase; text-align: center; margin: 0; letter-spacing: 1px; text-shadow: 0 0 10px rgba(255,215,0,0.2);">Ganesh Chaturthi Event</h3>
-                            <img src="dipgif.gif" style="width: 24px; height: 24px; mix-blend-mode: screen;">
-                        </div>
-                        <p style="text-align: center; font-size: 13px; color: #A0AABF; font-weight: 600; margin-bottom: 24px;">Complete all steps to participate and win rewards!</p>
-
-                        <!-- Step 1 -->
-                        <div style="background: var(--color-navy-dark); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 16px; text-align: center;">
-                            <div style="font-size: 14px; font-weight: 800; color: #FFF; margin-bottom: 4px;">Step 1 — Download This Image</div>
-                            <div style="font-size: 12px; color: #A0AABF; font-weight: 600; margin-bottom: 16px;">चरण 1: यह Image Download करें</div>
-                            <img src="down.png" onerror="this.onerror=null; this.src='./logo.png';" style="width: 140px; aspect-ratio: 9/16; object-fit: cover; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1); margin: 0 auto 16px; display: block; box-shadow: 0 4px 15px rgba(0,0,0,0.3);">
-                            <button class="btn" style="background: var(--color-navy-header); color: #FFF; padding: 12px; font-size: 13px; border-radius: 8px; width: 100%; border: 1px solid rgba(255,255,255,0.1); text-transform: uppercase;" onclick="vibrate(10); downloadGcImage('down.png', 'GaneshChaturthi_BattleTruth.png')"><i class="fa-solid fa-download"></i> Download Image</button>
-                        </div>
-
-                        <!-- Step 2 -->
-                        <div style="background: var(--color-navy-dark); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 16px; text-align: center;">
-                            <div style="font-size: 14px; font-weight: 800; color: #FFF; margin-bottom: 4px;">Step 2 — Share on Instagram Story</div>
-                            <div style="font-size: 12px; color: #A0AABF; font-weight: 600; margin-bottom: 12px;">चरण 2 — Instagram Story पर Share करें</div>
-                            <div style="background: rgba(255,255,255,0.02); padding: 12px; border-radius: 8px; font-size: 13px; color: #FFF; font-weight: 600; line-height: 1.5; border: 1px dashed rgba(255,255,255,0.1);">
-                                Post the downloaded image on your Instagram Story and clearly tag <b style="color: #FFC107;">@BattleTruth</b>!
-                            </div>
-                        </div>
-
-                        <!-- Step 3 -->
-                     <!-- Step 3 -->
-<div style="background: var(--color-navy-dark); border: 1px solid rgba(255,255,255,0.05); border-radius: 12px; padding: 16px; margin-bottom: 24px; text-align: center;">
-    <div style="font-size: 14px; font-weight: 800; color: #FFF; margin-bottom: 4px;">Step 3 — Send Screenshot for Coins</div>
-    <div style="font-size: 12px; color: #A0AABF; font-weight: 600; margin-bottom: 16px;">चरण 3 — कॉइन्स के लिए टीम को स्क्रीनशॉट भेजें</div>
-    
-    <div style="background: rgba(37, 211, 102, 0.05); padding: 12px; border-radius: 8px; font-size: 13px; color: #FFF; font-weight: 600; line-height: 1.5; border: 1px dashed rgba(37, 211, 102, 0.3); margin-bottom: 16px;">
-        Send a screenshot of your Instagram story to our WhatsApp team. Once verified, <b style="color: #FFC107;">we will manually add the coins</b> to your wallet!
-    </div>
-    
-    <button class="btn" style="background: rgba(37,211,102,0.1); color: #FFF; padding: 12px; font-size: 13px; border-radius: 8px; width: 100%; border: 1px solid rgba(37,211,102,0.5); text-transform: uppercase;" onclick="vibrate(10); claimCoinsWhatsapp()">
-        <i class="fa-brands fa-whatsapp" style="font-size: 18px; color: #25D366;"></i> Send Screenshot
-    </button>
-</div>
-                        <!-- Manual Reward Notice -->
-                        <div style="background: rgba(255, 215, 0, 0.05); border-left: 4px solid rgba(255, 215, 0, 0.5); border-radius: 4px; padding: 16px; text-align: left;">
-                            <div style="font-size: 14px; font-weight: 800; color: #FFF; margin-bottom: 4px;"><i class="fa-solid fa-circle-check" style="color: #FFC107;"></i> Your submission is complete!</div>
-                            <div style="font-size: 12px; color: #FFC107; font-weight: 700; margin-bottom: 8px;">आपका submission complete है!</div>
-                            <p style="font-size: 12px; color: #A0AABF; font-weight: 600; margin: 0; line-height: 1.5;">Our team will verify your participation and manually add the reward coins to your wallet. No automatic coins will be added.</p>
-                        </div>
-                    </div>
-                    <!-- END OF GANESH CHATURTHI EVENT SECTION -->
-
                 </div>
             </div>
 
@@ -428,7 +369,6 @@
             </div>
         </div>
 
-        <!-- WALLET, DEPOSIT & OTHER MODALS KEEP UNCHANGED -->
         <!-- NOTIFICATIONS SCREEN -->
         <div id="screen-notifications" class="screen screen-full" style="background:#F8F9FA;">
             <div class="top-header"><i class="fa-solid fa-arrow-left" onclick="vibrate(10); history.back()"></i><h2>NOTIFICATIONS</h2></div>
@@ -800,6 +740,7 @@
             else $('main-nav').classList.remove('hidden-nav');
         };
 
+        // FIXED: Interval checks and automatically triggers reverse-locking if a tournament is unexpectedly delayed by the Admin.
         setInterval(() => {
             const now = Date.now();
             document.querySelectorAll('[data-timer-target]').forEach(el => {
@@ -818,6 +759,14 @@
                     const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000); 
                     el.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; 
                     if(el.id === 'dashboard-timer') { el.style.fontSize = '32px'; el.style.color = 'var(--color-purple)'; }
+                    
+                    // FIXED: Re-lock if the timer goes back above 0 (e.g. Admin pushes the match time forward after it already unlocked)
+                    if(el.id === 'room-details-timer' && !$('room-unlocked-state').classList.contains('hidden')) {
+                        $('room-locked-state').classList.remove('hidden');
+                        $('room-unlocked-state').classList.add('hidden');
+                        $('reveal-room-id').innerText = '------';
+                        $('reveal-room-pass').innerText = '------';
+                    }
                 }
             });
         }, 1000);
@@ -906,7 +855,6 @@
         let txListener = null;
         function watchTransactions(uid) { if(txListener) txListener(); txListener = onValue(ref(db, `walletHistory/${uid}`), snap => { window.appData.walletHistory = snap.val() || {}; renderWallet(); }); }
 
-     
         // Auth
         setPersistence(auth, browserLocalPersistence).then(() => {
             onAuthStateChanged(auth, async user => {
@@ -951,14 +899,8 @@
                     $('screen-auth').classList.add('active'); 
                     updateNavVisibility('screen-auth'); 
                 }
-                
                 isAuthReady = true;
                 tryHideGlobalLoader();
-
-                // TRIGGER GANESH CHATURTHI SPLASH ON SUCCESSFUL LOGIN/SESSION RESTORE
-                if (user && !window.gcEventShown) {
-                    setTimeout(window.initGcEvent, 600);
-                }
             });
         });
         
@@ -1084,7 +1026,7 @@
         window.renderLeaderboard = () => { $('leaderboard-list').innerHTML = window.appData.leaderboard.length ? window.appData.leaderboard.map((u,i) => `<div style="display:flex; align-items:center; background:#FFF; border-radius:12px; padding:16px; margin-bottom:12px; border:1px solid #E0E0E0;"><div style="font-size:18px; font-weight:800; width:40px; text-align:center; color:${i===0?'#FFD700':i===1?'#C0C0C0':i===2?'#CD7F32':'#333'};">${i<3 ? `<i class="fa-solid fa-medal"></i>` : `#${i+1}`}</div><img loading="lazy" decoding="async" src="${getAvatar(u.username)}" onerror="this.onerror=null; this.src='./logo.png';" class="skeleton" onload="this.classList.remove('skeleton')" style="width:44px; height:44px; border-radius:50%; margin-right:16px; border:2px solid #EEE; object-fit: cover;"><div style="flex:1;"><div style="font-weight:800; font-size:15px; color:#000;">${u.username}</div><div style="font-size:12px; color:#666; font-weight:600; margin-top:2px;">Kills: ${u.kills||0} | Matches: ${u.matches||0}</div></div><div style="text-align:right;"><div style="font-size:11px; color:#999; font-weight:700;">EARNINGS</div><div style="font-weight:800; font-size:16px; color:var(--color-orange);"><i class="fa-solid fa-coins text-gold"></i> ${u.winnings||0}</div></div></div>`).join('') : '<div style="text-align:center; color:#999; padding:40px; font-weight:600;">No rankings yet.</div>'; };
 
        
-             // EARN HUB (Spin Wheel Only)
+         // EARN HUB (Spin Wheel Only)
         const drawWheel = () => {
             const canvas = $('spin-wheel-canvas'); if(!canvas) return; const ctx = canvas.getContext('2d'); 
             const colors =['#6200EE', '#88D4C0', '#FF8C00', '#E91E63', '#00BCD4', '#4CAF50']; 
@@ -1241,6 +1183,7 @@
             } catch(e){ showToast(e.message||'Error','error'); } finally{ isJoining=false; setLoadingBtn('btn-confirm-join',false,`PAY & JOIN <i class="fa-solid fa-coins text-gold" style="margin-left:4px;"></i> ${t.entryFee}`); }
         };
 
+        // FIXED: openPostJoinDashboard calculates rendering logic instantly to prevent a flicker when time is synced
         window.openPostJoinDashboard = (id = window.activeTournamentId) => {
             if(!id) return;
             window.activeTournamentId = id; navTo('screen-room-dashboard'); 
@@ -1260,9 +1203,14 @@
                 timerEl.dataset.unlocked = "false";
                 timerEl.style.fontSize = '32px';
                 timerEl.style.color = 'var(--color-purple)';
+                // Ensure immediate rendering to prevent flicker issue
+                const diff = rTime - Date.now();
+                const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000); 
+                timerEl.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; 
             }
         };
 
+        // FIXED: openRoomDetails immediately calculates offset rendering exactly like the dashboard to ensure sync
         window.openRoomDetails = (id = window.activeTournamentId) => {
             if(!id) return;
             window.activeTournamentId = id; navTo('screen-room-details'); 
@@ -1280,8 +1228,14 @@
             } else { 
                 $('room-locked-state').classList.remove('hidden'); 
                 $('room-unlocked-state').classList.add('hidden'); 
-                $('room-details-timer').setAttribute('data-timer-target', rTime); 
-                $('room-details-timer').dataset.unlocked = "false";
+                const timerEl = $('room-details-timer');
+                timerEl.setAttribute('data-timer-target', rTime); 
+                timerEl.dataset.unlocked = "false";
+                
+                // Ensure immediate rendering to prevent flicker issue
+                const diff = rTime - Date.now();
+                const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000); 
+                timerEl.innerText = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`; 
             }
         };
 
@@ -1358,105 +1312,6 @@
         };
         
         window.openPrivacyModal = () => { vibrate(10); navTo('modal-privacy'); };
-
-        // --- GANESH CHATURTHI SPECIAL FEATURE LOGIC ---
-        window.gcEventShown = false;
-
-        window.initGcEvent = () => {
-            if (window.gcEventShown) return;
-            window.gcEventShown = true;
-            
-            const splash = $('gc-splash');
-            
-            splash.classList.remove('hidden');
-            setTimeout(() => {
-                splash.style.opacity = '1';
-                // Attempt to play audio (may fail if strictly blocked by browser without interaction)
-                const audio = $('gc-audio');
-                if (audio) {
-                    audio.volume = 0.6;
-                    audio.play().catch(e => console.log('Autoplay blocked waiting for user interaction'));
-                }
-            }, 50);
-        };
-
-        window.closeGcSplash = () => {
-            vibrate(10);
-            
-            // Guarantee audio play bypasses browser restrictions via this interaction
-            const audio = $('gc-audio');
-            if (audio && audio.paused) {
-                audio.volume = 0.6;
-                audio.play().catch(e => console.log('Audio autoplay completely blocked by browser', e));
-            }
-
-            const splash = $('gc-splash');
-            splash.style.opacity = '0';
-            
-            setTimeout(() => {
-                splash.classList.add('hidden');
-                window.showGcModal();
-            }, 500);
-        };
-
-        window.showGcModal = () => {
-            const modal = $('gc-modal');
-            const content = $('gc-modal-content');
-            modal.classList.remove('hidden');
-            setTimeout(() => {
-                modal.style.opacity = '1';
-                content.style.transform = 'translateY(0)';
-            }, 50);
-        };
-
-        window.closeGcModal = () => {
-            vibrate(10);
-            const modal = $('gc-modal');
-            const content = $('gc-modal-content');
-            
-            content.style.transform = 'translateY(100%)';
-            modal.style.opacity = '0';
-            
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 400);
-        };
-
-        window.goToGcEvent = () => {
-            window.closeGcModal();
-            navTo('screen-earn');
-            setTimeout(() => {
-                const section = $('gc-event-section');
-                if (section) {
-                    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }
-            }, 500);
-        };
-
-        window.downloadGcImage = (url, filename) => {
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = filename;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            showToast('Download started!', 'success');
-        };
-
-        window.claimCoinsWhatsapp = () => {
-    // Automatically get the logged-in user's name if available
-    const playerName = (typeof userData !== 'undefined' && userData && userData.username) ? userData.username : "[Your Game Name]";
-    
-    // Create a pre-filled WhatsApp message
-    const text = encodeURIComponent(`Hello BattleTruth Team! 🙏\n\nI have successfully shared the Ganesh Chaturthi event on my Instagram story. Please find the screenshot attached.\n\n🎮 My In-Game Name: ${playerName}\n\nPlease verify and add the reward coins to my wallet. Thank you!`);
-    
-    // Your support WhatsApp number (918860204675 based on your profile support number)
-    const supportNumber = "918860204675";
-    const url = `https://wa.me/${supportNumber}?text=${text}`;
-    
-    window.open(url, '_blank');
-};
-        // ----------------------------------------------
     </script>
 </body>
 </html>
